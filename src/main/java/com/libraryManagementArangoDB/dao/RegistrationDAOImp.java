@@ -16,8 +16,12 @@ public class RegistrationDAOImp implements RegistrationDAO {
 
     @Override
     public Optional<UserCollection> isUserExists(String email) {
-        // TODO Auto-generated method stub
         return userRepo.findByEmail(email);
+    }
+
+    @Override
+    public UserCollection createUser(UserCollection userDetails) {
+        return userRepo.save(userDetails);
     }
 
 }

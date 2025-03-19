@@ -8,4 +8,6 @@ public interface RegistrationDAO {
 
     Optional<UserCollection> isUserExists(String username);
 
+    UserCollection createUser(UserCollection userDetails);
+
 }
