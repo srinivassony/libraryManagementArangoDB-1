@@ -1,5 +1,6 @@
 package com.libraryManagementArangoDB.services;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -53,11 +54,6 @@ public class RegistrationServiceImp implements RegistrationService {
             String email = userServiceDTO.getEmail() != null ? userServiceDTO.getEmail() : null;
 
             String role;
-            if (userServiceDTO.getIsAdmin() != null) {
-                role = "ROLE_ADMIN,";
-            } else {
-                role = "ROLE_USER,";
-            }
 
             String password = userServiceDTO.getPassword() != null
                     ? passwordEncoder.encode(userServiceDTO.getPassword())
@@ -68,14 +64,27 @@ public class RegistrationServiceImp implements RegistrationService {
             LocalDateTime createdAt = LocalDateTime.now();
 
             String createdBy = uuid;
+            SecureRandom secureRandom = new SecureRandom();
+            String sixDigitNumber = String.valueOf(100000 + secureRandom.nextInt(900000)); // Generates a number between
+                                                                                           // 100000 and 999999
+            System.out.println("6-Digit Secure Random Number: " + sixDigitNumber);
 
             UserCollection userDetails = new UserCollection();
 
             userDetails.setUserName(userName);
             userDetails.setEmail(email);
             userDetails.setPassword(password);
+
+            if (userServiceDTO.getIsAdmin() != null) {
+                role = "ROLE_ADMIN,";
+            } else {
+                role = "ROLE_STUDENT,";
+                userDetails.setRollNo(sixDigitNumber);
+            }
+
             userDetails.setRole(role);
             userDetails.setUuid(uuid);
+
             userDetails.setCreatedAt(createdAt);
             userDetails.setCreatedBy(createdBy);
 
@@ -92,17 +101,18 @@ public class RegistrationServiceImp implements RegistrationService {
                 return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
             }
 
+            // userEmailProducer.sendMessage(userData);
             CustomResponse<UserCollection> responseBody = new CustomResponse<>(userInfo, "CREATED",
                     HttpStatus.OK.value(),
                     req.getRequestURI(), LocalDateTime.now());
 
             return new ResponseEntity<>(responseBody, HttpStatus.OK);
         } catch (Exception e) {
-
             CustomResponse<String> responseBody = new CustomResponse<>(e.getMessage(), "BAD_REQUEST",
                     HttpStatus.BAD_REQUEST.value(), req.getRequestURI(), LocalDateTime.now());
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
+
     }
 
 }
