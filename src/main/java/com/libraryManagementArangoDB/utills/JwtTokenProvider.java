@@ -1,5 +1,6 @@
 package com.libraryManagementArangoDB.utills;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,30 +14,35 @@ import com.libraryManagementArangoDB.dto.UserInfoDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenProvider {
 
-    private final String jwtSecret = "libraryManagementArangoDBSecretKey";
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // ✅ Secure key
     private final long jwtExpirationMs = 86400000; // 24 hours
 
     // Generate Token with custom claims (id, email, roles)
     public String generateToken(Authentication authentication) {
         UserInfoDTO user = (UserInfoDTO) authentication.getPrincipal(); // Assuming your principal is UserInfoDTO
 
-        return Jwts.builder().setSubject(user.getEmail()) // You can set username as subject
+        return Jwts.builder()
+                .setSubject(user.getEmail()) // You can set username as subject
                 .claim("id", user.getId()) // Store user id
-                .claim("userName", user.getUserName()).claim("email", user.getEmail()) // Store email
+                .claim("userName", user.getUserName())
+                .claim("email", user.getEmail()) // Store email
                 .claim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())) // Store
                                                                                                                          // roles
-                .setIssuedAt(new Date()).setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key) // Use proper key
+                .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -44,13 +50,12 @@ public class JwtTokenProvider {
     }
 
     public String getEmailFromToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public List<String> getRolesFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-
-        return (List<String>) claims.get("roles"); // Roles stored as a list in JWT
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return claims.get("roles", List.class); // Get roles as list
     }
 
 }
