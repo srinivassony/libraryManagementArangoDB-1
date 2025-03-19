@@ -2,6 +2,7 @@ package com.libraryManagementArangoDB.controller;
 
 import java.time.LocalDateTime;
 
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class CustomErrorController {
+public class CustomErrorController implements ErrorController {
 
     @RequestMapping("/error")
     public ResponseEntity<?> handleError(HttpServletRequest request, HttpServletResponse res) {
