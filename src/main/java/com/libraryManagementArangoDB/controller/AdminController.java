@@ -110,7 +110,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> fetchUserBooksByBookId(HttpServletRequest req, HttpServletResponse res,
             @RequestBody BookservicesDTO bookservicesDTO, @RequestParam int page, @RequestParam int size) {
-
+        System.out.println("BOOKSERVICES DTO" + " " + bookservicesDTO);
         return adminservices.fetchUserBooksByBookId(req, res, bookservicesDTO, page, size);
     }
 
