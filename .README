@@ -1,0 +1,8 @@
+To run the test cases for specific test case we need to run like below
+mvn test -Dtest=AuthenticationControllerTest
+
+To run the all test cases we need to run like below
+mvn test
+
+for report cammond
+mvn clean test jacoco:report
