@@ -99,6 +99,12 @@
 			<version>0.11.5</version>
 			<scope>runtime</scope>
 		</dependency>
+		<!--excel dependency-->
+		<dependency>
+           <groupId>org.apache.poi</groupId>
+           <artifactId>poi-ooxml</artifactId>
+           <version>5.2.3</version> <!-- Use the latest version -->
+        </dependency>
 
 	</dependencies>
 	<build>

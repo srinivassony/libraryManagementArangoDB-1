@@ -57,4 +57,5 @@ public class UserCollection {
     private LocalDateTime updatedAt;
 
     private String updatedBy;
+
 }

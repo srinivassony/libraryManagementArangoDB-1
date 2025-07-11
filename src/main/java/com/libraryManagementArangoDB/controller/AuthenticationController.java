@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.libraryManagementArangoDB.config.CustomResponse;
 import com.libraryManagementArangoDB.dto.UserServiceDTO;
-import com.libraryManagementArangoDB.services.RegistrationService;
+import com.libraryManagementArangoDB.services.Registrationservices;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,10 +24,10 @@ import jakarta.validation.Valid;
 public class AuthenticationController {
 
     @Autowired
-    RegistrationService registrationService;
+    Registrationservices registrationservices;
 
     @PostMapping("/add/user")
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserServiceDTO userServiceDTO, BindingResult result,
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserServiceDTO userservicesDTO, BindingResult result,
             HttpServletRequest req, HttpServletResponse res) {
 
         if (result.hasErrors()) {
@@ -45,7 +45,7 @@ public class AuthenticationController {
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
 
-        return registrationService.createUserInfo(userServiceDTO, req, res);
+        return registrationservices.createUserInfo(userservicesDTO, req, res);
     }
 
 }
