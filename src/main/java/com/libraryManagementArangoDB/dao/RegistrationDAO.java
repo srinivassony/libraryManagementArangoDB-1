@@ -6,8 +6,7 @@ import com.libraryManagementArangoDB.model.UserCollection;
 
 public interface RegistrationDAO {
 
-    Optional<UserCollection> isUserExists(String username);
+    Optional<UserCollection> isUserExists(String email);
 
     UserCollection createUser(UserCollection userDetails);
-
 }
